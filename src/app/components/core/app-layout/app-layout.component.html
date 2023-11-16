@@ -1,0 +1,27 @@
+<header>
+    <div class="right">
+        <a href="https://angularschool.yek.link" class="btn-flip" data-back="یک لینک" data-front="صفحات مجموعه"
+            target="_blank"></a>
+        <span class="copyright">
+            &#169; 2023 | angularschool
+        </span>
+    </div>
+
+    <div class="center">
+        <div class="app-title mark-blue">App-11</div>
+        <div class="description">پروژه ی ثبت کارجو</div>
+    </div>
+
+    <div class="left">
+        <div class="logo"></div>
+    </div>
+</header>
+
+<main>
+    <div class="main-panel">
+        <router-outlet></router-outlet>
+        <app-loading *ngIf="isShowLoading"></app-loading>
+    </div>
+</main>
+
+<app-tips></app-tips>

@@ -1,0 +1,55 @@
+<div class="main">
+    <div class="row">
+        <div class="field">
+            <small class="text-gray">نام شما</small>
+            <p>{{ jobSeeker.jobSeekerName }}</p>
+        </div>
+        <div class="field">
+            <small class="text-gray">شماره تلفن همراه</small>
+            <p>{{ jobSeeker.mobileNumber }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="field">
+            <ng-container *ngIf="!jobSeeker.isWorkExperience">
+                <small class="text-gray">سابقه کاری</small>
+                <p>سابقه کاری ندارید</p>
+            </ng-container>
+            <ng-container *ngIf="jobSeeker.isWorkExperience">
+                <small class="text-gray">فایل های رزومه</small>
+                <div class="resume" *ngFor="let resumeFileName of jobSeeker.resumeFileNames">
+                    <span class="text-ellipsis">{{ resumeFileName }}</span>
+                    <button class="btn-blue btn-small" (click)="onDownloadResumeClick(resumeFileName)">دانلود</button>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <div class="row">
+        <div class="field">
+            <span> شما پنل </span>
+            <span class="" [class]="
+                jobSeeker.panel.toString() == panelsEnum[panelsEnum.BLUE] ? 'mark-blue' :
+                jobSeeker.panel.toString() == panelsEnum[panelsEnum.GOLD] ? 'mark-gold' :
+                jobSeeker.panel.toString() == panelsEnum[panelsEnum.GRAY] ? 'mark-gray' : '' ">
+                {{ panelsEnum[jobSeeker.panel] }}
+            </span>
+            <span> را انتخاب کرده اید </span>
+        </div>
+    </div>
+    <div class="row" *ngIf="jobSeeker.bankCardNumber">
+        <div class="field">
+            <small class="text-gray">شماره کارت</small>
+            <p class="card-number">
+                {{ jobSeeker.bankCardNumber | cardNumberMask }}
+            </p>
+            <p class="text-center">
+                <span class="text-bold text-green">{{ bankName }}</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="mt-30 text-center">
+        <button class="btn-green" (click)="onISeeClicked()">مشاهده کردم</button>
+    </div>
+
+</div>

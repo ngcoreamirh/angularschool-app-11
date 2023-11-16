@@ -1,0 +1,36 @@
+<div class="main" *ngIf="!isShowJobSeeker">
+    <div class="img"></div>
+
+    <ng-container *ngIf="!jobSeeker">
+        <p class="text-gray text-center">
+            کارجوی محترم، برای ثبت اطلاعات روی دکمه ی زیر کلیک کن
+        </p>
+        <button *ngIf="!jobSeeker" class="btn-green" routerLink="register-job-seeker">ثبت اطلاعات کارجو</button>
+    </ng-container>
+
+    <ng-container *ngIf="jobSeeker?.registrationStatus == registrationStatus.TEMPORARY">
+        <p class="text-center">
+            {{ jobSeeker?.jobSeekerName }} عزیز،
+            <span class="text-gray">
+                اطلاعات شما به صورت موقت ثبت شده است. لطفا برای ادامه روی دکمه ی زیر کلیک کنید.
+            </span>
+        </p>
+        <button class="btn-blue" routerLink="register-job-seeker">تکمیل اطلاعات</button>
+    </ng-container>
+
+    <ng-container *ngIf="jobSeeker?.registrationStatus == registrationStatus.FINAL">
+        <p class="text-center">
+            تبریک! اطلاعات شما کامل است...
+        </p>
+        <div class="btns">
+            <button class="btn-gold" (click)="onShowJobSeekerClick()">مشاهده اطلاعات</button>
+            <button class="btn-red-light" (click)="onRemoveJobSeekerClick()">حذف اطلاعات</button>
+        </div>
+    </ng-container>  
+</div>
+
+<div *ngIf="isShowJobSeeker">
+    <app-show-job-seeker [jobSeekerData]="jobSeeker" (ISeeClick)="onISeeClick()"></app-show-job-seeker>
+</div>
+
+<app-loading *ngIf="isShowLoading"></app-loading>

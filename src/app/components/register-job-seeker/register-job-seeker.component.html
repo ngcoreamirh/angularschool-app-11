@@ -1,0 +1,212 @@
+<div class="main">
+    <div class="header">
+        <div class="step" [class.active]="activeStep == 1" [class.complete]="isFormStepOneHasValue() && FormStepOne.valid"
+            [class.invalid]="isFormStepOneHasValue() && !FormStepOne.valid && activeStep != 1">
+            اطلاعات اولیه
+        </div>
+        <div class="step" [class.active]="activeStep == 2" [class.complete]="isFormStepTwoHasValue() && FormStepTwo.valid"
+            [class.invalid]="isFormStepTwoHasValue() && !FormStepTwo.valid && activeStep != 2">
+            رزومه شغلی
+        </div>
+        <div class="step" [class.active]="activeStep == 3"
+            [class.complete]="isFormStepThreeHasValue() && FormStepThree.valid"
+            [class.invalid]="isFormStepThreeHasValue() && !FormStepThree.valid && activeStep != 3">
+            انتخاب پنل
+        </div>
+        <div class="step" [class.active]="activeStep == 4">
+            ثبت نهایی
+        </div>
+    </div>
+
+    <div class="content">
+        <div [hidden]="activeStep != 1">
+            <form [formGroup]="FormStepOne">
+                <div class="row">
+                    <div class="title">نام و نام خانوادگی:</div>
+                    <div class="input-container">
+                        <input type="text" formControlName="jobSeekerName" [formControl]="" maxlength="25">
+                    </div>
+                    <p class="error-text text-center" *ngIf="FormStepOne.controls.jobSeekerName.errors &&
+                    FormStepOne.controls.jobSeekerName.touched">
+                        نام و نام خانوادگی نمیتونه خالی باشه
+                    </p>
+                </div>
+                <div class="row">
+                    <div class="title">شماره تلفن همراه:</div>
+                    <div class="input-container">
+                        <input type="text" onlyNumber formControlName="mobileNumber" maxlength="11">
+                    </div>
+                    <p class="error-text text-center" *ngIf="FormStepOne.controls.mobileNumber.hasError('required') &&
+                            FormStepOne.controls.mobileNumber.touched">
+                            شماره تلفن همراه نمیتونه خالی باشه
+                    </p>
+                    <p class="error-text text-center" *ngIf="FormStepOne.controls.mobileNumber.hasError('mobileValidator') &&
+                            FormStepOne.controls.mobileNumber.touched">
+                        لطفا شماره تلفن همراهت رو به درستی وارد کن
+                    </p>
+                </div>
+            </form>
+        </div>
+        <div [hidden]="activeStep != 2">
+            <form [formGroup]="FormStepTwo">
+                <div class="row">
+                    <div class="title">
+                        {{ FormStepOne.controls.jobSeekerName.value }} عزیز تا به حال جایی مشغول به کار بودی؟
+                    </div>
+                    <div class="input-container">
+                        <span class="text-center">
+                            <label>بله بوده ام</label>
+                            <input type="radio" [value]="true" formControlName="isWorkExperience">
+                        </span>
+                        <span class="text-center">
+                            <label>خیر نبوده ام</label>
+                            <input type="radio" [value]="false" formControlName="isWorkExperience">
+                        </span>
+                    </div>
+                    <p class="error-text text-center" *ngIf="FormStepTwo.controls.isWorkExperience.errors &&
+                    FormStepTwo.controls.isWorkExperience.touched">
+                        لطفا یکی رو انتخاب کن
+                    </p>
+                </div>
+                <div class="row" *ngIf="FormStepTwo.controls.isWorkExperience.value">
+                    <p class="text-center text-gray" *ngIf="isUploadAllowed">
+                        <small>فرمت های قابل قبول: jpg, png, zip, pdf (حداکثر 3 فایل، هر فایل 3 مگ)</small>
+                    </p>
+                    <div class="input-container" *ngIf="isUploadAllowed">
+                        <label class="upload-container" dragAndDropUpload (filesDropped)="onFilesUploaded($event)">
+                            <p class="title"></p>
+                            <input type="file" multiple (change)="onFilesUploaded($event.target['files'])"
+                                accept="image/*,.zip,.pdf">
+                        </label>
+                    </div>
+                    <p class="error-text text-center" *ngIf="FormStepTwo.controls.resumeFileNames.errors &&
+                        FormStepTwo.controls.resumeFileNames.touched">
+                        لطفا رزومه رو آپلود کن
+                    </p>
+                    <div class="text-center" *ngIf="FormStepTwo.controls.resumeFileNames?.value?.length > 0">
+                        <small *ngIf="resumeFiles">فایل های انتخاب شده:</small>
+                        <small *ngIf="!resumeFiles">فایل های آپلود شده:</small>
+                        <div *ngIf="resumeFiles">
+                            <ng-container *ngFor="let resumeFile of resumeFiles">
+                                <div class="files-item" *ngIf="resumeFiles">
+                                    <button class="btn-small" (click)="removeFile(resumeFile)">×</button>
+                                    <p class="title text-ellipsis">{{ resumeFile.name }}</p>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <div *ngIf="!resumeFiles">
+                            <ng-container *ngFor="let resumeFileName of FormStepTwo.controls.resumeFileNames?.value">
+                                <div class="files-item" *ngIf="!resumeFiles">
+                                    <p class="title">{{ resumeFileName }}</p>
+                                </div>
+                            </ng-container>
+                            <button (click)="removeFiles()">آپلود مجدد</button>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div [hidden]="activeStep != 3">
+            <form [formGroup]="FormStepThree">
+                <div class="row">
+                    <div class="title">لطفا پنل کاری رو هم انتخاب کن</div>
+                    <div class="box-container">
+                        <div class="box gray"
+                            [class.active]="FormStepThree.controls?.panel.value == panelsEnum[panelsEnum.GRAY]"
+                            (click)="onPanelSelected(panelsEnum.GRAY)">
+                            <span class="title">{{ panelsEnum.GRAY }}</span>
+                        </div>
+                        <div class="box blue"
+                            [class.active]="FormStepThree.controls?.panel.value == panelsEnum[panelsEnum.BLUE]"
+                            (click)="onPanelSelected(panelsEnum.BLUE)">
+                            <span class="title">{{ panelsEnum.BLUE }}</span>
+                        </div>
+                        <div class="box gold"
+                            [class.active]="FormStepThree.controls?.panel.value == panelsEnum[panelsEnum.GOLD]"
+                            (click)="onPanelSelected(panelsEnum.GOLD)">
+                            <span class="title">{{ panelsEnum.GOLD }}</span>
+                        </div>
+                    </div>
+                    <p class="error-text text-center" *ngIf="FormStepThree.controls?.panel.errors &&
+                    FormStepThree.controls.panel?.touched">
+                        لطفا پنل رو انتخاب کن
+                    </p>
+                </div>
+                <div class="row text-center mt-30" *ngIf="FormStepThree.controls?.panel.value">
+                    <div class="details">
+                        <ng-container *ngIf="FormStepThree.controls?.panel.value == panelsEnum[panelsEnum.GRAY]">
+                            <p>معرفی حداکثر 1 شغل در ماه</p>
+                            <span>هزینه انتخاب پنل: </span>
+                            <span class="mark mark-green"
+                                *ngIf="FormStepThree.controls?.panel.value == panelsEnum[panelsEnum.GRAY]">
+                                رایگان
+                            </span>
+                        </ng-container>
+                        <ng-container *ngIf="FormStepThree.controls?.panel.value == panelsEnum[panelsEnum.BLUE]">
+                            <p>معرفی حداکثر 5 شغل در ماه</p>
+                            <span>هزینه انتخاب پنل: </span>
+                            <span class="mark mark-blue"
+                                *ngIf="FormStepThree.controls?.panel.value == panelsEnum[panelsEnum.BLUE]">
+                                {{ 50000 | number }} تومان
+                            </span>
+                        </ng-container>
+                        <ng-container *ngIf="FormStepThree.controls?.panel.value == panelsEnum[panelsEnum.GOLD]">
+                            <p>معرفی شغل بدون محدودیت</p>
+                            <span>هزینه انتخاب پنل: </span>
+                            <span class="mark mark-gold"
+                                *ngIf="FormStepThree.controls?.panel.value == panelsEnum[panelsEnum.GOLD]">
+                                {{ 199000 | number }} تومان
+                            </span>
+                        </ng-container>
+                    </div>
+                </div>
+                <div class="row min-h-200">
+                    <ng-container *ngIf="FormStepThree.controls?.panel?.value && 
+                        FormStepThree.controls?.panel?.value != panelsEnum[panelsEnum.GRAY]">
+                        <div class="title">
+                            شماره 16 رقمی کارت بانکی را وارد کنید
+                            <span class="text-bold text-green">{{ bankName }}</span>
+                        </div>
+                        <div class="input-container">
+                            <input class="ltr" type="text" onlyNumber cardNumber (bankName)="setbankName($event)"
+                                maxlength="16" #bankCardNumberInput formControlName="bankCardNumber">
+                        </div>
+                        <p class="card-number" *ngIf="bankCardNumberInput.value">
+                            {{ bankCardNumberInput.value | cardNumberMask }}
+                        </p>
+                        <p class="error-text text-center" *ngIf="FormStepThree.controls.bankCardNumber.hasError('required') &&
+                            FormStepThree.controls.bankCardNumber.touched">
+                            لطفا شماره کارتت رو وارد کن
+                        </p>
+                        <p class="error-text text-center" *ngIf="FormStepThree.controls.bankCardNumber.hasError('minlength') &&
+                            FormStepThree.controls.bankCardNumber.touched">
+                            لطفا شماره 16 رقمی کارتت رو کامل وارد کن
+                        </p>
+                        <p class="error-text text-center" *ngIf="FormStepThree.controls.bankCardNumber.hasError('bankNotFound') &&
+                            FormStepThree.controls.bankCardNumber.touched">
+                            بانک شناسایی نشد. شماره کارت وارد شده صحیح نیست
+                        </p>
+                       
+                    </ng-container>
+                </div>
+            </form>
+        </div>
+        <div [hidden]="activeStep != 4">
+            <div class="img"></div>
+            <p class="text-center">
+                اطلاعات شما کامل است.
+                چنانچه دکمه ی ثبت نهایی را بزنید اطلاعات به سرور ارسال شده و قابل ویرایش نیست.
+            </p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button class="btn" (click)="previousClick()"> {{ activeStep == 1 ? 'انصراف' : 'بازگشت' }} </button>
+        <button class="btn btn-gold" *ngIf="activeStep != 4" (click)="onTemporaryRegistrationClick()">ثبت موقت</button>
+        <button class="btn btn-green" *ngIf="activeStep == 4" (click)="onFinalRegistrationClick()">ثبت نهایی</button>
+        <button class="btn btn-blue" *ngIf="activeStep != 4" (click)="nextClick()">مرحله بعد</button>
+    </div>
+
+    <app-loading *ngIf="isShowLoading"></app-loading>
+</div>

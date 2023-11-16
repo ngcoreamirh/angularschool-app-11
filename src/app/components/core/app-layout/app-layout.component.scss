@@ -1,0 +1,116 @@
+@import 'src/assets/styles/classes';
+@import 'src/assets/styles/variables';
+
+header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: $Layout_Header_Min_Height;
+    background-color: #f7f7f7;
+    box-shadow: 1px 1px 3px #d5d5d5;
+    padding: 0px 5px;
+
+    .left {
+        display: flex;
+        justify-content: left;
+        min-width: 150px;
+
+        .logo {
+            width: 4.5rem;
+            height: 4.5rem;
+            background: url('../../../../assets/images/logo-thumb-light.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            filter: drop-shadow(0px 4px 2px #d8d8d8);
+            transition: .6s ease;
+        }
+    }
+
+    .center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: 5px;
+
+        .app-title {
+            font-family: ARLRDBD;
+            font-size: 1.7rem;
+            font-weight: bold;
+            padding: 4px 7px;
+            text-align: center;
+            background: linear-gradient(to left, #63a1f2 20%, #780ac6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .description {
+            color: #999999;
+            text-align: center;
+            font-size: .9rem;
+        }
+    }
+
+    .right {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 150px;
+
+        .copyright {
+            color: rgb(170, 170, 170);
+            font-family: arial;
+            font-size: .8rem;
+            letter-spacing: 1px;
+            direction: ltr;
+            text-align: center;
+        }
+    }
+
+    &:hover {
+        .left {
+            .logo {
+                filter: drop-shadow(1px 1px 10px #646464);
+            }
+        }
+    }
+}
+
+
+main {
+    padding: $Layout_Main_Padding;
+
+    .main-panel {
+        position: relative;
+        min-height: calc((100vh - $Layout_Header_Min_Height) - ($Layout_Main_Padding * 2));
+        max-width: 500px;
+        background-color: white;
+        margin: 0px auto;
+        border-radius: 20px;
+    }
+}
+
+
+/* Responsive Styles */
+@media screen and (max-width: 767px) {}
+
+@media screen and (max-width: 575px) {
+    header {
+        .left {
+            min-width: 55px;
+        }
+
+        .center {
+            align-items: last baseline;
+        }
+
+        .right {
+            min-width: 110px;
+            .copyright {
+                letter-spacing: normal;
+            }
+        }
+    }
+}
